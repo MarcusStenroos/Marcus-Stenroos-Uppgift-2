@@ -1,0 +1,169 @@
+<!--
+Inlämning 2 av Marcus Stenroos
+Inlämningsdag 2018-03-04
+
+Skapade ingen CSS fil då det finns såpass lite formatering i min HTML-kod och den lilla formatering som finns är specifik för varje rad
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+
+</head>
+<meta charset="utf-8">
+<title>Inlämning 2 av Marcus Stenroos</title>
+
+
+<body>
+
+<div id="myDiv" style="width:600px; height:550px; float:left;"></div>
+<div id="myDiv2" style="width:600px; height:550px; float:left;"></div>
+<div style="clear:both"/>
+<div id="myDiv3" style="width:600px; height:550px; float:left;"></div>
+<div id="myDiv4" style="width:600px; height:550px; float:left;"></div>
+
+</body>
+<script type="text/javascript" src="./jsFil.js"></script>
+<script type="text/javascript" src="./plotly-latest.min.js"></script>
+
+<script>
+
+//Global funktion i javaskript
+ 
+function groupBy(list, keyGetter) {
+    const map = new Map();
+    list.forEach((item) => {
+        const key = keyGetter(item);
+        const collection = map.get(key);
+        if (!collection) {
+            map.set(key, [item]);
+        } else {
+            collection.push(item);
+        }
+    });
+    return map;
+}
+
+//Deklarerar variabler
+var data = jsonData;
+var priceList = [];
+var reviewsList = [];
+var accommodatesList = [];
+var room_typeList = [];
+
+//Hämtar info från listan mha for-loop
+for (var i=0; i < data.length; i++) {
+	priceList.push(data[i].price);
+	reviewsList.push(data[i].reviews);
+	accommodatesList.push(data[i].accommodates);
+	room_typeList.push(data[i].room_type);
+}
+
+
+//Sätter in värden i axlarna
+var trace1 = {
+  x: priceList, 
+  y: reviewsList,
+  mode: 'markers',
+  marker: {
+	color: "rgba(0, 255, 0, 0.7)", 
+    line: {
+      color:  "rgba(255, 0, 0, 1)", 
+      width: 1
+    }
+  },
+};
+
+
+var data1 = [trace1];
+var layout1 = {
+  title: 'Price & Rewiev',
+  xaxis: {
+    title: 'Price',
+    showgrid: false,
+    zeroline: true
+  },
+  yaxis: {
+    title: 'Rewiev',
+    showline: true,
+	color:'green'
+  }
+};
+
+var trace2 = {
+  x: priceList, 
+  type:'histogram',
+  marker: {
+	color: 'red',
+  }
+};
+
+var data2 = [trace2];
+var layout2 = {
+  title: 'Price',
+  xaxis: {
+	title: 'Price',
+	showgrid: true,
+	zeroline: true
+  },
+  
+  yaxis: {
+    
+    showline: true
+  }
+};
+
+var trace3 = {
+  x: accommodatesList, 
+  type:'histogram',
+  marker: {
+  color: 'lime',
+  }
+};
+
+var data3 = [trace3];
+var layout3 = {
+  
+  xaxis: {
+    title: 'Accommodates',
+    showgrid: true,
+    zeroline: true
+  },
+  yaxis: {
+    
+    showline: true
+  }
+};
+//Använder funktionen groupby för att gruppera de olika rumstyperna
+var typeMap = groupBy(data, function(item) {
+	return item.room_type;
+});
+
+//Deklarerar arrayer som data ska sparas i
+var typeLabels = [];
+var typeCounts = [];
+
+//Fyller arrayerna med rumstyp samt antal av varje typ
+typeMap.forEach(function(values, key) {
+	typeLabels.push(key);
+	typeCounts.push(values.length);
+});
+
+var trace4 = {
+  labels: typeLabels,
+  values: typeCounts, 
+  type:'pie',
+  marker: {
+	color: 'lime',
+  }
+};
+var data4 = [trace4];
+
+Plotly.newPlot('myDiv', data1, layout1);
+Plotly.newPlot('myDiv2', data2, layout2);
+Plotly.newPlot('myDiv3', data3, layout3);
+Plotly.newPlot('myDiv4', data4);
+
+</script>
+
+</html>
